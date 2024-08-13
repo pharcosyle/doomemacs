@@ -1,4 +1,9 @@
 ;;; ui/vc-gutter/config.el -*- lexical-binding: t; -*-
+;;;
+
+(defvar +vc-gutter-on-the-fly t
+  "When enabled, update the gutter on the fly (as you type) instead of only
+considering the state on-disk (after you save).")
 
 ;;
 ;;; Default styles
@@ -62,9 +67,10 @@
 (use-package! diff-hl
   :hook (doom-first-file . global-diff-hl-mode)
   :hook (vc-dir-mode . turn-on-diff-hl-mode)
-  :hook (diff-hl-mode . diff-hl-flydiff-mode)
   :commands diff-hl-stage-current-hunk diff-hl-revert-hunk diff-hl-next-hunk diff-hl-previous-hunk
   :init
+  (when +vc-gutter-on-the-fly
+    (add-hook! 'diff-hl-mode-hook #'diff-hl-flydiff-mode))
   (add-hook! 'dired-mode-hook
     (defun +vc-gutter-enable-maybe-h ()
       "Conditionally enable `diff-hl-dired-mode' in dired buffers.
